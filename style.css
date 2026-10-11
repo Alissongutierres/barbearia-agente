@@ -130,9 +130,9 @@ grid-column: 1 / 2;
 grid-row: 1 / -1;
 }
 .minhas-informacoes {
-background-image: url(midias/barbearia-capa.jpg);
-background-size: auto;
-background-position: center left;
+background-image: url(midias/barbearia-capa.jpeg);
+background-size: cover;
+background-position: right center;
 background-repeat: no-repeat;
 padding: 10px;
 grid-column: 2 / -1;
