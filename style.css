@@ -77,6 +77,7 @@ header > .pesquisa {
     color: #F1F5F9;
     font-size: 24px;
     cursor: pointer;
+    transform: translatex(230px);
 }
 
 .contador {
@@ -122,12 +123,17 @@ header > .pesquisa {
     cursor: pointer;
 }
 
+
 .nav-bar {
 padding: 10px;
 grid-column: 1 / 2;
 grid-row: 1 / -1;
 }
 .minhas-informacoes {
+background-image: url(midias/barbearia-capa.jpg);
+background-size: auto;
+background-position: center left;
+background-repeat: no-repeat;
 padding: 10px;
 grid-column: 2 / -1;
 }
