@@ -128,15 +128,66 @@ header > .pesquisa {
 padding: 10px;
 grid-column: 1 / 2;
 grid-row: 1 / -1;
+display: flex;
+flex-direction: column;
 }
+
+.nav-img-tit {
+ display: flex;
+ gap: 6px; 
+ margin-left: 5px;  
+}
+
+.nav-img-tit > img {
+ width: 50px;
+}
+
+.nav-img-tit > h2 {
+    font-size: 1.3rem;
+    filter: brightness(0.97);
+}
+.span2 {
+    color: #F4B942;
+}
+
+.nav-bar p {
+  font-size: 0.75rem;
+  margin-top: 5px;
+  margin-left: 62px;
+}
+
+
 .minhas-informacoes {
-background-image: url(midias/barbearia-capa.jpeg);
+background-image: url(midias/Vintage_barber_shop_interior_20261011185709.jpg);
 background-size: cover;
-background-position: right center;
+background-position: left center;
 background-repeat: no-repeat;
 padding: 10px;
 grid-column: 2 / -1;
 }
+
+.info-titulos {
+    margin-left: 10px;
+    backdrop-filter: blur(20px);
+    width: 20%;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.minhas-informacoes .info-titulos h2 {
+  font-size: 1.9rem;
+  font-weight: bold;
+  text-shadow: 3px 3px 4px black;
+  margin-bottom: 5px;
+  
+}
+
+.minhas-informacoes .info-titulos p {
+    font-size: 0.95rem;
+    text-shadow: 3px 3px 4px black;
+    margin-bottom: 15px;
+}
+
 main { 
 padding: 10px;
 grid-column: 2 / 3;
