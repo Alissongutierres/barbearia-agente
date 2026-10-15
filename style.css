@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -185,7 +187,7 @@ grid-column: 2 / -1;
 .minhas-informacoes .info-titulos p {
     font-size: 0.95rem;
     text-shadow: 3px 3px 4px black;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 main { 
@@ -208,11 +210,44 @@ grid-row: 3 / 7;
   height: 100px;
 }
 aside {
-
-padding: 10px;
+font-family: 'Inter', sans-serif;;
+padding: 20px;
 grid-column: 3 / -1;
 grid-row: 3 / 7;
 }
+
+.nav-bar nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.nav-bar nav ul li {
+    font-size: 0.90rem;
+    list-style: none;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+.nav-bar nav ul li:hover {
+    background-color: #F4B942;
+    border-radius: 10px;
+    padding: 5px;
+    color: black;
+    cursor: pointer;
+    transition: 0.8s;
+}
+.icone {
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    
+}
+
 footer {
 padding: 10px;
 grid-column: 1 / -1;
