@@ -248,6 +248,49 @@ nav ul li a {
     
 }
 
+.nav-bar  .aside-poster .poster-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: left;
+    height: 250px;
+    width: 170px;
+    background-image: url("midias/Retrato\ Cinematográfico\ de\ Homem\ Barbado.png");
+    background-size: cover;
+    background-position: center;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+ .poster-info .poster-text {
+    font-size: 0.65rem;
+    margin-left: 0;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    
+    
+    
+}
+
+.aside-poster .linha {
+    width: 48px;
+    height: 10px;
+    border-bottom: 3px solid #F4B942;
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+ .poster-info h3 {
+    font-size: 0.7rem;
+    margin-left: 20px;
+}
+.nav-bar .aside-poster .poster-titulo {
+    font-size: 0.7rem;
+    color: #F4B942;
+    margin-left: 4px;
+    
+}
+
 footer {
 padding: 10px;
 grid-column: 1 / -1;
