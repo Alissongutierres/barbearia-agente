@@ -260,6 +260,8 @@ nav ul li a {
     background-position: center;
     border-radius: 5px;
     margin-top: 20px;
+    margin-left: 4px;
+    padding-bottom: 5px;
 }
 
  .poster-info .poster-text {
@@ -289,6 +291,27 @@ nav ul li a {
     color: #F4B942;
     margin-left: 4px;
     
+}
+
+.online-offline {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    margin-left: 12px;
+    .bolinha-indicador {
+        width: 12px;
+        height: 12px;
+        border: 1px solid greenyellow;
+        background-color: yellowgreen;
+        border-radius: 50%;
+    }
+    .text-onoff {
+      font-size: 0.7rem;
+      margin-left: 0;
+      margin-bottom: 4px;
+    }
 }
 
 footer {
