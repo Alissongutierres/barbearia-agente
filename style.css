@@ -13,7 +13,7 @@ body {
 
 .estilo {
     background-color: #0D1825;
-    border: 1px solid #1D3043;;
+    border: 1px solid #1D3043;
 }
 
 
@@ -209,11 +209,53 @@ grid-row: 3 / 7;
   width: 70%;
   height: 100px;
 }
-aside {
-font-family: 'Inter', sans-serif;;
+aside  {
+font-family: 'Inter', sans-serif;
 padding: 20px;
 grid-column: 3 / -1;
 grid-row: 3 / 7;
+}
+.sub-descri {
+  display: flex;
+  width: 100%;
+  gap: 5px;
+}
+.sub-menu h2 {
+    font-size: 0.70rem;
+    margin-right: 20px;
+}
+.aicone {
+    font-size: 0.98rem;
+   
+     
+}
+
+.sub-menu-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+    justify-content: center;
+
+}
+
+.info-item {
+    display: flex;
+    gap: 4px;
+    border: 2px solid #1D3043;
+    border-radius: 10px;
+    padding: 10px 6px 10px 4px;
+}
+
+.info-item > .item-icons {
+    text-align: center;
+    margin-left: 4px;
+}
+
+.info-item > h3 {
+    font-size: 0.64rem;
+    text-align: center;
+    
 }
 
 .nav-bar nav {
