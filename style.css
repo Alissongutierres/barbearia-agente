@@ -210,6 +210,8 @@ grid-row: 3 / 7;
   height: 100px;
 }
 aside  {
+width: 100%;
+box-sizing: border-box;
 font-family: 'Inter', sans-serif;
 padding: 20px;
 grid-column: 3 / -1;
@@ -244,7 +246,12 @@ grid-row: 3 / 7;
     gap: 4px;
     border: 2px solid #1D3043;
     border-radius: 10px;
-    padding: 10px 6px 10px 4px;
+    padding: 10px 6px 10px 6px;
+    cursor: pointer;
+}
+
+.info-item:hover {
+    border: 1px solid #F4B942;
 }
 
 .info-item > .item-icons {
@@ -253,9 +260,69 @@ grid-row: 3 / 7;
 }
 
 .info-item > h3 {
-    font-size: 0.64rem;
+    font-size: 0.6rem;
     text-align: center;
     
+}
+
+.satisfacao {
+    border: 2px solid #1D3043;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 5px 14px;
+    border-radius: 10px;
+}
+
+.satisfacao >  p {
+    font-size: 0.6rem;
+    text-align: center;
+}
+
+.notificacoes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  margin-top: 20px;
+  
+}
+
+ .notificacoes-tit {
+    font-size: 0.75rem;
+    margin-bottom: 15px;
+    
+}
+
+.icon-text {
+    font-size: 1rem;
+    margin-right: 8px;
+    margin-top: 10px;
+    
+}
+
+
+
+.notificacao-ponto-amar {
+    position: absolute;
+    top: 45px;
+    left: -20px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid yellow;
+    background-color: yellow;
+    border-radius: 50%;
+}
+
+.notificacoes-item {
+    padding: 5px;
+}
+
+.notificacoes-item > p {
+    font-size: 0.7rem;
 }
 
 .nav-bar nav {
