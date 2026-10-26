@@ -272,7 +272,7 @@ grid-row: 3 / 7;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 5px 14px;
     border-radius: 10px;
 }
@@ -283,17 +283,18 @@ grid-row: 3 / 7;
 }
 
 .notificacoes {
-  position: relative;
   display: flex;
   flex-direction: column;
+  gap: 2px;
   margin-left: 10px;
-  margin-top: 20px;
-  
+  margin-top: 8px; 
+
 }
 
  .notificacoes-tit {
     font-size: 0.75rem;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
+    text-decoration: underline;
     
 }
 
@@ -303,18 +304,57 @@ grid-row: 3 / 7;
     margin-top: 10px;
     
 }
+ 
+.notificacoes-msg {
+    position: relative;
+}
 
+.notificacoes-item > h3 {
+    font-size: 0.7rem;
+}
 
 
 .notificacao-ponto-amar {
     position: absolute;
-    top: 45px;
-    left: -20px;
+    top: 08px;
+    left: -12px;
     width: 10px;
     height: 10px;
     border: 1px solid yellow;
     background-color: yellow;
     border-radius: 50%;
+}
+
+.notificacao-ponto-ver {
+    position: absolute;
+    top: 60px;
+    left: -12px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgb(8, 154, 25);
+    background-color: rgb(8, 154, 25);
+    border-radius: 50% ;
+}
+
+.notificacao-ponto-red {
+    position: absolute;
+    top: 112px;
+    left: -12px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid red;
+    background-color: red;
+    border-radius: 50% ;
+}
+
+.notificacao-ponto-blue {
+    position: absolute;
+    left: -12px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid blue;
+    background-color: blue;
+    border-radius: 50% ;
 }
 
 .notificacoes-item {
