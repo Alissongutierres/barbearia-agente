@@ -21,7 +21,7 @@ div.container {
 
   height: 100vh;
   display: grid; 
-  grid-template-columns: 200px 3fr 230px;
+  grid-template-columns: auto 3fr auto;
   grid-template-rows: 70px 1fr 1fr 1fr 1fr 1fr; 
   gap: 10px;
     
@@ -191,10 +191,74 @@ grid-column: 2 / -1;
 }
 
 main { 
+width: 65vw;
+height: 100%;
 padding: 10px;
 grid-column: 2 / 3;
 grid-row: 3 / 7;
 }
+
+main .status-painel {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: self-end;
+    align-self: self-start;
+    gap: 20px;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    margin-left: -33px;
+    margin-top: 30px;
+}
+
+main .status-painel .painel-item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid gray;
+    border-radius: 10px;
+    width: 650px;
+    height: 150px;
+    padding-right: 130px;
+    padding-left: 10px;
+   
+    
+}
+
+.icone-age {
+    background-color: blue;
+    border-radius: 5px;
+    font-size: 2rem;
+    padding: 2px;
+    margin-top: 5px;
+}
+
+.icone-confir {
+  background-color: green;
+  border-radius: 5px;
+  font-size: 1.95rem;
+  padding: 2px;
+  margin-top: 5px;
+}
+
+.painel-item > h3 {
+    font-size: 0.9rem;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.painel-item > .number {
+    font-size: 1.5rem;
+    margin-top: 3px;
+    font-weight: bold;
+    text-shadow: 1px 0px 2px violet;
+}
+
+.painel-port {
+    font-size: 0.8rem;
+    margin-top: 6px;
+}
+
 
 .principal {
   display: flex;
@@ -462,6 +526,8 @@ nav ul li a {
       margin-bottom: 4px;
     }
 }
+
+
 
 footer {
 padding: 10px;
