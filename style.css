@@ -210,8 +210,9 @@ main .status-painel {
     height: 100%;
     max-width: none;
     box-sizing: border-box;
-    margin-left: -38px;
-    margin-top: 30px;
+    margin-left: -32px;
+    margin-bottom: 60px;
+    
 }
 
 main .status-painel .painel-item {
@@ -227,6 +228,13 @@ main .status-painel .painel-item {
     box-shadow: 2px 2px 4px white;
    
     
+}
+
+main .status-painel .painel-item:hover {
+    border: 1px solid yellowgreen;
+    box-shadow: 2px 2px 4px yellowgreen;
+    cursor: pointer;
+   
 }
 
 .icone-age {
@@ -267,7 +275,7 @@ main .status-painel .painel-item {
     font-size: 0.8rem;
     text-align: left;
     margin-top: 5px;
-    text-shadow: 1px 1px 8px yellow;
+    text-shadow: 1px 1px 2px yellow;
 }
 
 .painel-item > .number {
