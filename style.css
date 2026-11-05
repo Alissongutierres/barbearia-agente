@@ -304,6 +304,47 @@ main .status-painel .painel-item:hover {
   width: 70%;
   height: 100px;
 }
+
+.container-agendamentos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin-top: 20px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 61vw;
+    height: 100%;
+}
+
+caption {
+    position: relative;
+    
+}
+
+caption > h3 {
+    position: absolute;
+    left: 0;
+    bottom: 10px;
+}
+caption > p {
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    font-size: 0.8rem;
+}
+
+th, td {
+ border: 1px solid white;
+ padding: 8px;
+ text-align: center;
+ 
+}
+
 aside  {
 width: 100%;
 box-sizing: border-box;
