@@ -661,3 +661,113 @@ footer > p:hover {
     cursor: pointer;
 }
  
+#modal-agendamento {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.72);
+}
+
+#modal-agendamento[hidden] {
+    display: none;
+}
+
+.modal-conteudo {
+    position: relative;
+    width: min(520px, 100%);
+    padding: 28px;
+    border: 1px solid #F4B942;
+    border-radius: 12px;
+    background-color: #0D1825;
+    color: #F1F5F9;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    font-family: "Inter", sans-serif;
+}
+
+.modal-conteudo h2 {
+    margin-bottom: 22px;
+    color: #F4B942;
+    font-size: 1.3rem;
+}
+
+#fechar-agendamento {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    border: none;
+    background: transparent;
+    color: #94A3B8;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+#fechar-agendamento:hover {
+    color: #F4B942;
+}
+
+#form-agendamento {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+#form-agendamento label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #CBD5E1;
+    font-size: 0.8rem;
+}
+
+#form-agendamento label:first-child,
+#form-agendamento label:nth-child(2),
+#form-agendamento label:nth-child(3),
+#form-agendamento label:nth-child(4) {
+    grid-column: 1 / -1;
+}
+
+#form-agendamento input,
+#form-agendamento select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #1D3043;
+    border-radius: 7px;
+    outline: none;
+    background-color: #080F18;
+    color: #F1F5F9;
+    font-family: inherit;
+}
+
+#form-agendamento input:focus,
+#form-agendamento select:focus {
+    border-color: #F4B942;
+}
+
+#form-agendamento button[type="submit"] {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background-color: #F4B942;
+    color: #080F18;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#form-agendamento button[type="submit"]:hover {
+    filter: brightness(1.08);
+}
+
+@media (max-width: 520px) {
+    #form-agendamento {
+        grid-template-columns: 1fr;
+    }
+
+    #form-agendamento label {
+        grid-column: 1 / -1;
+    }
+}

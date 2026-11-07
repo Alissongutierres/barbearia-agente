@@ -1,28 +1,60 @@
+import {
+    db,
+    collection,
+    addDoc,
+    getDocs,
+    updateDoc,
+    doc,
+    query,
+    where,
+    onSnapshot,
+    serverTimestamp
+} from "./firebase.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const todayInput = document.querySelector("#data");
   const searchForm = document.querySelector(".pesquisa");
   const searchInput = searchForm?.querySelector('input[type="search"]');
-  const appointmentRows = [
-    ...document.querySelectorAll(".todos-agendamentos tbody tr"),
-  ];
+
+  const tableBody = document.querySelector("#lista-agendamentos");
+  const emptyRow = document.querySelector("#sem-agendamentos");
+  const viewAllButton = document.querySelector("caption p");
 
   const notificationButton = document.querySelector(".notificacao");
   const notificationCounter = notificationButton?.querySelector(".contador");
   const notificationPanel = document.querySelector(".notificacoes");
+
   const profileButton = document.querySelector(".seta");
   const navigationLinks = [...document.querySelectorAll(".nav-bar nav a")];
 
-  if (todayInput && !todayInput.value) {
-    const date = new Date();
-    const offset = date.getTimezoneOffset() * 60000;
-    todayInput.value = new Date(date - offset).toISOString().slice(0, 10);
-  }
+  const openAppointmentButton = document.querySelector("#abrir-agendamento");
+  const appointmentModal = document.querySelector("#modal-agendamento");
+  const closeAppointmentButton = document.querySelector("#fechar-agendamento");
+  const appointmentForm = document.querySelector("#form-agendamento");
+
+  let showingAllAppointments = false;
 
   const statusDefinitions = {
-    scheduled: { label: "Agendado", color: "orange" },
-    confirmed: { label: "Confirmado", color: "green" },
-    "in-service": { label: "Em atendimento", color: "blue" },
-    cancelled: { label: "Cancelado", color: "#EF4444" },
+    scheduled: {
+      label: "Agendado",
+      color: "orange",
+      className: "botao-agenda",
+    },
+    confirmed: {
+      label: "Confirmado",
+      color: "green",
+      className: "botao-confirma",
+    },
+    "in-service": {
+      label: "Em atendimento",
+      color: "blue",
+      className: "botao-atend",
+    },
+    cancelled: {
+      label: "Cancelado",
+      color: "#EF4444",
+      className: "botao-cancelado",
+    },
   };
 
   const statusOrder = [
@@ -32,73 +64,292 @@ document.addEventListener("DOMContentLoaded", () => {
     "cancelled",
   ];
 
-  const atualizarCards = () => {
-    const botoes = document.querySelectorAll(
-      ".todos-agendamentos tbody button",
+  if (todayInput && !todayInput.value) {
+    const date = new Date();
+    const offset = date.getTimezoneOffset() * 60000;
+    todayInput.value = new Date(date - offset).toISOString().slice(0, 10);
+  }
+
+  const getAppointments = () => {
+    return [...tableBody.querySelectorAll("tr[data-agendamento]")];
+  };
+
+  const updateCards = () => {
+    const selectedDate = todayInput?.value;
+    const appointmentsToday = getAppointments().filter(
+      (row) => row.dataset.date === selectedDate,
     );
 
-    let confirmados = 0;
-    let emAtendimento = 0;
-    let cancelados = 0;
+    const buttons = appointmentsToday
+      .map((row) => row.querySelector("button[data-status]"))
+      .filter(Boolean);
 
-    botoes.forEach((botao) => {
-      if (botao.dataset.status === "confirmed") confirmados++;
-      if (botao.dataset.status === "in-service") emAtendimento++;
-      if (botao.dataset.status === "cancelled") cancelados++;
-    });
+    const confirmed = buttons.filter(
+      (button) => button.dataset.status === "confirmed",
+    ).length;
+
+    const inService = buttons.filter(
+      (button) => button.dataset.status === "in-service",
+    ).length;
+
+    const cancelled = buttons.filter(
+      (button) => button.dataset.status === "cancelled",
+    ).length;
 
     const cards = document.querySelectorAll(".status-painel .painel-item");
 
     if (cards.length < 4) return;
 
-    cards[0].querySelector(".number").textContent = botoes.length;
-    cards[1].querySelector(".number").textContent = confirmados;
-    cards[2].querySelector(".number").textContent = emAtendimento;
-    cards[3].querySelector(".number").textContent = cancelados;
+    cards[0].querySelector(".number").textContent = buttons.length;
+    cards[0].querySelector(".painel-port").textContent =
+      buttons.length === 0
+        ? "Nenhum agendamento hoje"
+        : `${buttons.length} agendamento(s) nesta data`;
+
+    cards[1].querySelector(".number").textContent = confirmed;
+    cards[1].querySelector(".painel-port").textContent =
+      buttons.length
+        ? `${Math.round((confirmed / buttons.length) * 100)} % do total`
+        : "0 % do total";
+
+    cards[2].querySelector(".number").textContent = inService;
+    cards[3].querySelector(".number").textContent = cancelled;
+    cards[3].querySelector(".painel-port").textContent =
+      buttons.length
+        ? `${Math.round((cancelled / buttons.length) * 100)}% Total`
+        : "0% Total";
   };
 
-  document
-    .querySelectorAll(".todos-agendamentos tbody button")
-    .forEach((button) => {
-      const text = button.textContent.trim().toLowerCase();
+  const updateTableView = () => {
+    const selectedDate = todayInput?.value;
+    const searchTerm = searchInput?.value.trim().toLowerCase() ?? "";
+    const appointments = getAppointments();
 
-      button.dataset.status = text.includes("atendimento")
-        ? "in-service"
-        : text.includes("confirm")
-          ? "confirmed"
-          : "scheduled";
+    appointments.forEach((row) => {
+      const matchesDate =
+        showingAllAppointments || row.dataset.date === selectedDate;
 
-      button.type = "button";
+      const matchesSearch =
+        searchTerm === "" ||
+        row.textContent.toLowerCase().includes(searchTerm);
 
-      button.addEventListener("click", () => {
-        const currentIndex = statusOrder.indexOf(button.dataset.status);
-        const nextStatus =
-          statusOrder[(currentIndex + 1) % statusOrder.length];
-
-        const definition = statusDefinitions[nextStatus];
-
-        button.dataset.status = nextStatus;
-        button.style.backgroundColor = definition.color;
-        button.querySelector(".boton-text").textContent = definition.label;
-
-        atualizarCards();
-      });
+      row.hidden = !matchesDate || !matchesSearch;
     });
 
-  const filtrarAgendamentos = () => {
-    const term = searchInput?.value.trim().toLowerCase() ?? "";
+    const visibleAppointments = appointments.filter((row) => !row.hidden);
 
-    appointmentRows.forEach((row) => {
-      row.hidden = term !== "" && !row.textContent.toLowerCase().includes(term);
+    if (emptyRow) {
+      emptyRow.hidden = visibleAppointments.length > 0;
+
+      emptyRow.querySelector("td").textContent = showingAllAppointments
+        ? "Nenhum agendamento cadastrado."
+        : "Nenhum agendamento para esta data.";
+    }
+
+    updateCards();
+  };
+
+  const configureStatusButton = (button, initialStatus = "scheduled") => {
+    button.type = "button";
+    button.dataset.status = initialStatus;
+
+    const applyStatus = (status) => {
+      const definition = statusDefinitions[status];
+
+      button.dataset.status = status;
+      button.className = definition.className;
+      button.style.backgroundColor = definition.color;
+      button.setAttribute(
+        "aria-label",
+        `Status: ${definition.label}. Clique para alterar.`,
+      );
+
+      const textElement = button.querySelector(".boton-text");
+
+      if (textElement) {
+        textElement.textContent = definition.label;
+      } else {
+        button.textContent = definition.label;
+      }
+    };
+
+    applyStatus(initialStatus);
+
+    button.addEventListener("click", () => {
+      const currentIndex = statusOrder.indexOf(button.dataset.status);
+      const nextStatus =
+        statusOrder[(currentIndex + 1) % statusOrder.length];
+
+      applyStatus(nextStatus);
+      updateCards();
     });
   };
+
+  const addAppointmentToTable = (appointment) => {
+    const row = document.createElement("tr");
+
+    row.dataset.agendamento = "true";
+    row.dataset.date = appointment.date;
+    row.dataset.time = appointment.time;
+    row.dataset.barber = appointment.barber;
+    row.dataset.phone = appointment.phone;
+
+    const dateCell = document.createElement("td");
+
+    dateCell.textContent = new Date(
+      `${appointment.date}T00:00:00`,
+    ).toLocaleDateString("pt-BR");
+
+    const timeCell = document.createElement("td");
+    timeCell.textContent = appointment.time;
+
+    const clientCell = document.createElement("td");
+    clientCell.textContent = appointment.client;
+
+    const serviceCell = document.createElement("td");
+    serviceCell.textContent = appointment.service;
+
+    const barberCell = document.createElement("td");
+    barberCell.textContent = appointment.barber;
+
+    const statusCell = document.createElement("td");
+    const statusButton = document.createElement("button");
+    const statusText = document.createElement("span");
+
+    statusText.className = "boton-text";
+    statusButton.appendChild(statusText);
+    statusCell.appendChild(statusButton);
+
+    row.append(
+      dateCell,
+      timeCell,
+      clientCell,
+      serviceCell,
+      barberCell,
+      statusCell,
+    );
+
+    tableBody.appendChild(row);
+    configureStatusButton(statusButton, "scheduled");
+  };
+
+  const openAppointmentModal = () => {
+    appointmentModal.hidden = false;
+
+    const formDate = appointmentForm.querySelector('[name="data"]');
+    formDate.value = todayInput.value;
+
+    appointmentForm.querySelector('[name="cliente"]').focus();
+  };
+
+  const closeAppointmentModal = () => {
+    appointmentModal.hidden = true;
+    appointmentForm.reset();
+  };
+
+  openAppointmentButton?.addEventListener("click", openAppointmentModal);
+
+  openAppointmentButton?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openAppointmentModal();
+    }
+  });
+
+  closeAppointmentButton?.addEventListener("click", closeAppointmentModal);
+
+  appointmentModal?.addEventListener("click", (event) => {
+    if (event.target === appointmentModal) {
+      closeAppointmentModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !appointmentModal.hidden) {
+      closeAppointmentModal();
+    }
+  });
+
+  appointmentForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(appointmentForm);
+
+    const appointment = {
+      client: formData.get("cliente").trim(),
+      phone: formData.get("telefone").trim(),
+      service: formData.get("servico"),
+      barber: formData.get("barbeiro"),
+      date: formData.get("data"),
+      time: formData.get("horario"),
+    };
+
+    const timeAlreadyBooked = getAppointments().some((row) => {
+      return (
+        row.dataset.date === appointment.date &&
+        row.dataset.time === appointment.time &&
+        row.dataset.barber === appointment.barber
+      );
+    });
+
+    if (timeAlreadyBooked) {
+      alert("Este barbeiro já possui um agendamento neste horário.");
+      return;
+    }
+
+    addAppointmentToTable(appointment);
+
+    todayInput.value = appointment.date;
+    showingAllAppointments = false;
+
+    if (viewAllButton) {
+      viewAllButton.textContent = "Ver todos";
+    }
+
+    closeAppointmentModal();
+    updateTableView();
+  });
 
   searchForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    filtrarAgendamentos();
+    updateTableView();
   });
 
-  searchInput?.addEventListener("input", filtrarAgendamentos);
+  searchInput?.addEventListener("input", updateTableView);
+
+  todayInput?.addEventListener("change", () => {
+    showingAllAppointments = false;
+
+    if (viewAllButton) {
+      viewAllButton.textContent = "Ver todos";
+    }
+
+    updateTableView();
+  });
+
+  if (viewAllButton) {
+    viewAllButton.setAttribute("role", "button");
+    viewAllButton.setAttribute("tabindex", "0");
+
+    const toggleAllAppointments = () => {
+      showingAllAppointments = !showingAllAppointments;
+
+      viewAllButton.textContent = showingAllAppointments
+        ? "Ver somente esta data"
+        : "Ver todos";
+
+      updateTableView();
+    };
+
+    viewAllButton.addEventListener("click", toggleAllAppointments);
+
+    viewAllButton.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleAllAppointments();
+      }
+    });
+  }
 
   notificationButton?.addEventListener("click", () => {
     notificationPanel?.scrollIntoView({
@@ -109,11 +360,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (notificationCounter) {
       notificationCounter.textContent = "0";
     }
+
+    notificationButton.setAttribute(
+      "aria-label",
+      "Notificações: nenhuma nova",
+    );
   });
 
   profileButton?.addEventListener("click", () => {
-    const aberto = profileButton.getAttribute("aria-expanded") === "true";
-    profileButton.setAttribute("aria-expanded", String(!aberto));
+    const isOpen = profileButton.getAttribute("aria-expanded") === "true";
+    profileButton.setAttribute("aria-expanded", String(!isOpen));
   });
 
   navigationLinks.forEach((link) => {
@@ -123,5 +379,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  atualizarCards();
+  updateTableView();
 });
