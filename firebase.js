@@ -41,7 +41,7 @@ import {
 
 // 4. Configuração do projeto
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
+    apiKey: "AIzaSyBc_-WNf2zVOqEtLtEWDe0bVycXFN__H_8",
     authDomain: "barbearia-fio-de-ouro-bc4ab.firebaseapp.com",
     projectId: "barbearia-fio-de-ouro-bc4ab",
     storageBucket: "barbearia-fio-de-ouro-bc4ab.firebasestorage.app",
