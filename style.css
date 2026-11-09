@@ -8,6 +8,10 @@
     box-sizing: border-box;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 body {
     background-color: #080F18;
     color: #F1F5F9;
@@ -535,10 +539,28 @@ grid-row: 3 / 7;
 }
 
 .notificacoes-item {
+    position: relative;
     padding: 5px;
 }
 
 .notificacoes-item > p {
+    font-size: 0.7rem;
+}
+
+.notificacao-ponto {
+    position: absolute;
+    top: 10px;
+    left: -12px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #F4B942;
+    background-color: #F4B942;
+    border-radius: 50%;
+}
+
+.notificacoes-vazia {
+    padding: 8px 5px;
+    color: #94A3B8;
     font-size: 0.7rem;
 }
 
@@ -661,7 +683,8 @@ footer > p:hover {
     cursor: pointer;
 }
  
-#modal-agendamento {
+#modal-agendamento,
+.modal-overlay {
     position: fixed;
     inset: 0;
     z-index: 1000;
@@ -671,7 +694,8 @@ footer > p:hover {
     background-color: rgba(0, 0, 0, 0.72);
 }
 
-#modal-agendamento[hidden] {
+#modal-agendamento[hidden],
+.modal-overlay[hidden] {
     display: none;
 }
 
@@ -693,7 +717,8 @@ footer > p:hover {
     font-size: 1.3rem;
 }
 
-#fechar-agendamento {
+#fechar-agendamento,
+.fechar-modal {
     position: absolute;
     top: 12px;
     right: 15px;
@@ -704,17 +729,20 @@ footer > p:hover {
     cursor: pointer;
 }
 
-#fechar-agendamento:hover {
+#fechar-agendamento:hover,
+.fechar-modal:hover {
     color: #F4B942;
 }
 
-#form-agendamento {
+#form-agendamento,
+.form-modal {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
 
-#form-agendamento label {
+#form-agendamento label,
+.form-modal label {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -730,7 +758,9 @@ footer > p:hover {
 }
 
 #form-agendamento input,
-#form-agendamento select {
+#form-agendamento select,
+.form-modal input,
+.form-modal select {
     width: 100%;
     padding: 10px;
     border: 1px solid #1D3043;
@@ -742,11 +772,14 @@ footer > p:hover {
 }
 
 #form-agendamento input:focus,
-#form-agendamento select:focus {
+#form-agendamento select:focus,
+.form-modal input:focus,
+.form-modal select:focus {
     border-color: #F4B942;
 }
 
-#form-agendamento button[type="submit"] {
+#form-agendamento button[type="submit"],
+.form-modal button[type="submit"] {
     grid-column: 1 / -1;
     margin-top: 8px;
     padding: 11px;
@@ -758,8 +791,24 @@ footer > p:hover {
     cursor: pointer;
 }
 
-#form-agendamento button[type="submit"]:hover {
+#form-agendamento button[type="submit"]:hover,
+.form-modal button[type="submit"]:hover {
     filter: brightness(1.08);
+}
+
+.form-modal {
+    grid-template-columns: 1fr;
+}
+
+.mensagem-form {
+    min-height: 1rem;
+    color: #F4B942;
+    font-size: 0.75rem;
+}
+
+.form-modal button:disabled {
+    cursor: wait;
+    opacity: 0.65;
 }
 
 @media (max-width: 520px) {
