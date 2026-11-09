@@ -1,4 +1,17 @@
-import { db, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp } from "./firebase.js";
+import {
+  auth,
+  db,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const todayInput = document.querySelector("#data");
@@ -20,10 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const appointmentModal = document.querySelector("#modal-agendamento");
   const closeAppointmentButton = document.querySelector("#fechar-agendamento");
   const appointmentForm = document.querySelector("#form-agendamento");
+  const panel = document.querySelector("#painel");
+  const loginScreen = document.querySelector("#login-screen");
+  const loginForm = document.querySelector("#form-login");
+  const loginMessage = document.querySelector("#mensagem-login");
 
   let showingAllAppointments = false;
   let savingAppointment = false;
   let appointmentsLoaded = false;
+  let unsubscribeAppointments = null;
   const pendingStatusUpdates = new Set();
   const appointmentsCollection = collection(db, "agendamentos");
 
@@ -395,9 +413,12 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  profileButton?.addEventListener("click", () => {
-    const isOpen = profileButton.getAttribute("aria-expanded") === "true";
-    profileButton.setAttribute("aria-expanded", String(!isOpen));
+  profileButton?.addEventListener("click", async () => {
+    if (!auth.currentUser) return;
+
+    if (window.confirm("Deseja sair do painel administrativo?")) {
+      await signOut(auth);
+    }
   });
 
   navigationLinks.forEach((link) => {
@@ -407,25 +428,91 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  const showLogin = (message = "") => {
+    if (unsubscribeAppointments) {
+      unsubscribeAppointments();
+      unsubscribeAppointments = null;
+    }
+
+    appointmentsLoaded = false;
+    panel.hidden = true;
+    loginScreen.hidden = false;
+    loginMessage.textContent = message;
+  };
+
+  const startAppointmentsListener = () => {
+    if (unsubscribeAppointments) unsubscribeAppointments();
+
+    unsubscribeAppointments = onSnapshot(
+      appointmentsCollection,
+      { includeMetadataChanges: true },
+      (snapshot) => {
+        appointmentsLoaded = !snapshot.metadata.fromCache;
+        getAppointments().forEach((row) => row.remove());
+
+        snapshot.forEach((appointmentDoc) => {
+          addAppointmentToTable({ ...appointmentDoc.data(), id: appointmentDoc.id });
+        });
+
+        updateTableView();
+      },
+      (error) => {
+        appointmentsLoaded = false;
+        console.error("Erro ao carregar os agendamentos.", error);
+        showLogin("Não foi possível acessar os agendamentos.");
+      },
+    );
+  };
+
+  loginForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(loginForm);
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+
+    loginMessage.textContent = "";
+    submitButton.disabled = true;
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        formData.get("email").trim(),
+        formData.get("senha"),
+      );
+    } catch (error) {
+      console.error("Erro ao entrar no painel.", error);
+      loginMessage.textContent = "E-mail ou senha inválidos.";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      showLogin();
+      return;
+    }
+
+    try {
+      const profile = await getDoc(doc(db, "usuarios", user.uid));
+      const isAdmin = profile.exists() && profile.data().tipo === "admin";
+
+      if (!isAdmin) {
+        await signOut(auth);
+        showLogin("Esta conta não tem permissão de administrador.");
+        return;
+      }
+
+      loginScreen.hidden = true;
+      panel.hidden = false;
+      loginMessage.textContent = "";
+      startAppointmentsListener();
+    } catch (error) {
+      console.error("Erro ao validar o administrador.", error);
+      await signOut(auth);
+      showLogin("Não foi possível validar sua conta de administrador.");
+    }
+  });
+
   updateTableView();
-
-  onSnapshot(
-    appointmentsCollection,
-    { includeMetadataChanges: true },
-    (snapshot) => {
-      appointmentsLoaded = !snapshot.metadata.fromCache;
-      getAppointments().forEach((row) => row.remove());
-
-      snapshot.forEach((appointmentDoc) => {
-        addAppointmentToTable({ ...appointmentDoc.data(), id: appointmentDoc.id });
-      });
-
-      updateTableView();
-    },
-    (error) => {
-      appointmentsLoaded = false;
-      console.error("Erro ao carregar os agendamentos.", error);
-      alert("Não foi possível carregar os agendamentos. Verifique o acesso ao Firestore.");
-    },
-  );
 });

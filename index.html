@@ -9,7 +9,30 @@
 </head>
 
 <body>
-    <div class="container">
+    <section id="login-screen" aria-labelledby="login-title">
+        <div class="login-card">
+            <img src="midias/Emblema dourado de barbearia com poste clássico.png" alt="Emblema da Barbearia Fio de Ouro">
+            <h1 id="login-title">Barbearia <span>Fio de Ouro</span></h1>
+            <p>Acesse o painel administrativo.</p>
+
+            <form id="form-login">
+                <label>
+                    E-mail
+                    <input type="email" name="email" autocomplete="email" required>
+                </label>
+
+                <label>
+                    Senha
+                    <input type="password" name="senha" autocomplete="current-password" required>
+                </label>
+
+                <button type="submit">Entrar no painel</button>
+                <p id="mensagem-login" role="alert" aria-live="polite"></p>
+            </form>
+        </div>
+    </section>
+
+    <div class="container" id="painel" hidden>
         <header class="estilo">
             <form action="#" method="post" class="pesquisa">
                 <button type="submit" aria-label="Pesquisar">🔍</button>
