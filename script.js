@@ -1,15 +1,4 @@
-import {
-    db,
-    collection,
-    addDoc,
-    getDocs,
-    updateDoc,
-    doc,
-    query,
-    where,
-    onSnapshot,
-    serverTimestamp
-} from "./firebase.js";
+import { db, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const todayInput = document.querySelector("#data");
@@ -33,6 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const appointmentForm = document.querySelector("#form-agendamento");
 
   let showingAllAppointments = false;
+  let savingAppointment = false;
+  let appointmentsLoaded = false;
+  const pendingStatusUpdates = new Set();
+  const appointmentsCollection = collection(db, "agendamentos");
 
   const statusDefinitions = {
     scheduled: {
@@ -149,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCards();
   };
 
-  const configureStatusButton = (button, initialStatus = "scheduled") => {
+  const configureStatusButton = (button, appointmentId, initialStatus) => {
     button.type = "button";
     button.dataset.status = initialStatus;
 
@@ -173,15 +166,26 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    applyStatus(initialStatus);
+    applyStatus(statusOrder.includes(initialStatus) ? initialStatus : "scheduled");
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
+      if (pendingStatusUpdates.has(appointmentId)) return;
       const currentIndex = statusOrder.indexOf(button.dataset.status);
       const nextStatus =
         statusOrder[(currentIndex + 1) % statusOrder.length];
 
-      applyStatus(nextStatus);
-      updateCards();
+      pendingStatusUpdates.add(appointmentId);
+
+      try {
+        await updateDoc(doc(appointmentsCollection, appointmentId), {
+          status: nextStatus,
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar o status do agendamento.", error);
+        alert("Não foi possível atualizar o status. Tente novamente.");
+      } finally {
+        pendingStatusUpdates.delete(appointmentId);
+      }
     });
   };
 
@@ -230,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     tableBody.appendChild(row);
-    configureStatusButton(statusButton, "scheduled");
+    configureStatusButton(statusButton, appointment.id, appointment.status);
   };
 
   const openAppointmentModal = () => {
@@ -243,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const closeAppointmentModal = () => {
+    if (savingAppointment) return;
     appointmentModal.hidden = true;
     appointmentForm.reset();
   };
@@ -265,13 +270,19 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !appointmentModal.hidden) {
+    if (event.key === "Escape" && appointmentModal && !appointmentModal.hidden) {
       closeAppointmentModal();
     }
   });
 
-  appointmentForm?.addEventListener("submit", (event) => {
+  appointmentForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (savingAppointment) return;
+    if (!appointmentsLoaded) {
+      alert("Aguarde o carregamento dos agendamentos antes de cadastrar.");
+      return;
+    }
 
     const formData = new FormData(appointmentForm);
 
@@ -297,7 +308,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    addAppointmentToTable(appointment);
+    savingAppointment = true;
+    const submitButton = event.submitter;
+    if (submitButton) submitButton.disabled = true;
+
+    try {
+      await addDoc(appointmentsCollection, {
+        ...appointment,
+        status: "scheduled",
+        createdAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Erro ao salvar o agendamento.", error);
+      alert("Não foi possível salvar o agendamento. Tente novamente.");
+      return;
+    } finally {
+      savingAppointment = false;
+      if (submitButton) submitButton.disabled = false;
+    }
 
     todayInput.value = appointment.date;
     showingAllAppointments = false;
@@ -380,4 +408,24 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   updateTableView();
+
+  onSnapshot(
+    appointmentsCollection,
+    { includeMetadataChanges: true },
+    (snapshot) => {
+      appointmentsLoaded = !snapshot.metadata.fromCache;
+      getAppointments().forEach((row) => row.remove());
+
+      snapshot.forEach((appointmentDoc) => {
+        addAppointmentToTable({ ...appointmentDoc.data(), id: appointmentDoc.id });
+      });
+
+      updateTableView();
+    },
+    (error) => {
+      appointmentsLoaded = false;
+      console.error("Erro ao carregar os agendamentos.", error);
+      alert("Não foi possível carregar os agendamentos. Verifique o acesso ao Firestore.");
+    },
+  );
 });
