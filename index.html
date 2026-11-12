@@ -65,13 +65,13 @@
             <nav>
                 <ul>
                     <li><i class="fa-regular fa-house icone" style="color: rgb(249, 247, 247);"></i> <a href="#dashboard">Dashboard</a></li>
-                    <li><i class="fa-regular fa-calendar-days icone" style="color: rgb(249, 247, 247);"></i> <a href="#agendamentos">Agendamentos</a></li>
-                    <li><i class="fa-solid fa-scissors icone" style="color: rgb(249, 247, 247);"></i> <a href="#servicos">Serviços</a></li>
-                    <li><i class="fa-regular fa-user icone" style="color: rgb(249, 247, 247);"></i> <a href="#barbeiros">Barbeiros</a></li>
-                    <li><i class="fa-solid fa-users icone" style="color: rgb(249, 247, 247);"></i> <a href="#clientes">Clientes</a></li>
-                    <li><i class="fa-regular fa-clock icone" style="color: rgb(249, 247, 247);"></i> <a href="#horarios">Horários</a></li>
-                    <li><i class="fa-solid fa-chart-column icone" style="color: rgb(249, 247, 247);"></i> <a href="#relatorios">Relatórios</a></li>
-                    <li><i class="fa-solid fa-gear icone" style="color: rgb(249, 247, 247);"></i> <a href="#configuracoes">Configurações</a></li>
+                    <li><i class="fa-regular fa-calendar-days icone" style="color: rgb(249, 247, 247);"></i> <a href="#agendamentos" id="gerenciar-agendamentos">Agendamentos</a></li>
+                    <li><i class="fa-solid fa-scissors icone" style="color: rgb(249, 247, 247);"></i> <a href="#servicos" id="gerenciar-servicos">Serviços</a></li>
+                    <li><i class="fa-regular fa-user icone" style="color: rgb(249, 247, 247);"></i> <a href="#barbeiros" id="gerenciar-barbeiros">Barbeiros</a></li>
+                    <li><i class="fa-solid fa-users icone" style="color: rgb(249, 247, 247);"></i> <a href="#clientes" id="gerenciar-clientes">Clientes</a></li>
+                    <li><i class="fa-regular fa-clock icone" style="color: rgb(249, 247, 247);"></i> <a href="#horarios" id="configurar-horarios">Horários</a></li>
+                    <li><i class="fa-solid fa-chart-column icone" style="color: rgb(249, 247, 247);"></i> <a href="#relatorios" id="abrir-relatorios">Relatórios</a></li>
+                    <li><i class="fa-solid fa-gear icone" style="color: rgb(249, 247, 247);"></i> <a href="#configuracoes" id="abrir-configuracoes">Configurações</a></li>
                 </ul>
             </nav>
 
@@ -176,7 +176,7 @@
                         <h3>Novo Agendamento</h3>
                     </div>
 
-                    <div class="info-item">
+                    <div class="info-item" id="abrir-servico" role="button" tabindex="0">
                         <i class="fa-solid fa-scissors item-icons" style="color: rgb(223, 223, 24);"></i>
                         <h3>Cadastrar serviço</h3>
                     </div>
@@ -186,7 +186,7 @@
                         <h3>Cadastrar Barbeiro</h3>
                     </div>
 
-                    <div class="info-item">
+                    <div class="info-item" id="abrir-cliente" role="button" tabindex="0">
                         <i class="fa-solid fa-users item-icons" style="color: rgb(223, 223, 24);"></i>
                         <h3>Cadastrar Clientes</h3>
                     </div>
@@ -225,21 +225,19 @@
             <form id="form-agendamento">
                 <label>
                     Nome do cliente
-                    <input type="text" name="cliente" required>
+                    <input type="text" name="cliente" id="cliente-agendamento" list="clientes-cadastrados" autocomplete="off" required>
+                    <datalist id="clientes-cadastrados"></datalist>
                 </label>
 
                 <label>
                     WhatsApp
-                    <input type="tel" name="telefone" placeholder="(00) 00000-0000" required>
+                    <input type="tel" name="telefone" id="telefone-agendamento" placeholder="(00) 00000-0000" required>
                 </label>
 
                 <label>
                     Serviço
-                    <select name="servico" required>
-                        <option value="">Selecione</option>
-                        <option>Corte masculino</option>
-                        <option>Fazer barba</option>
-                        <option>Corte e barba</option>
+                    <select name="servico" id="servico-agendamento" required disabled>
+                        <option value="">Cadastre um serviço ativo</option>
                     </select>
                 </label>
 
@@ -257,7 +255,9 @@
 
                 <label>
                     Horário
-                    <input type="time" name="horario" required>
+                    <select name="horario" id="horario-agendamento" required disabled>
+                        <option value="">Selecione data, serviço e barbeiro</option>
+                    </select>
                 </label>
 
                 <button type="submit">Salvar agendamento</button>
@@ -292,6 +292,255 @@
 
                 <p class="mensagem-form" id="mensagem-barbeiro" role="status"></p>
                 <button type="submit">Salvar barbeiro</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-servico" class="modal-overlay" hidden>
+        <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="titulo-servico">
+            <button type="button" id="fechar-servico" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-servico">Cadastrar Serviço</h2>
+
+            <form id="form-servico" class="form-modal">
+                <label>
+                    Nome do serviço
+                    <input type="text" name="nome" minlength="2" maxlength="80" required>
+                </label>
+
+                <label>
+                    Duração em minutos
+                    <input type="number" name="duracao" min="5" max="480" step="5" placeholder="Ex.: 30" required>
+                </label>
+
+                <label>
+                    Preço (R$)
+                    <input type="number" name="preco" min="0" max="10000" step="0.01" placeholder="Ex.: 35,00" required>
+                </label>
+
+                <label>
+                    Status
+                    <select name="status" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </label>
+
+                <p class="mensagem-form" id="mensagem-servico" role="status"></p>
+                <button type="submit">Salvar serviço</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-cliente" class="modal-overlay" hidden>
+        <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="titulo-cliente">
+            <button type="button" id="fechar-cliente" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-cliente">Cadastrar Cliente</h2>
+
+            <form id="form-cliente" class="form-modal">
+                <label>
+                    Nome do cliente
+                    <input type="text" name="nome" minlength="2" maxlength="100" required>
+                </label>
+
+                <label>
+                    WhatsApp
+                    <input type="tel" name="telefone" placeholder="(00) 00000-0000" maxlength="20" required>
+                </label>
+
+                <label>
+                    E-mail (opcional)
+                    <input type="email" name="email" maxlength="120" placeholder="cliente@email.com">
+                </label>
+
+                <label>
+                    Status
+                    <select name="status" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </label>
+
+                <p class="mensagem-form" id="mensagem-cliente" role="status"></p>
+                <button type="submit">Salvar cliente</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-gerenciar-barbeiros" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento" role="dialog" aria-modal="true" aria-labelledby="titulo-gerenciar-barbeiros">
+            <button type="button" id="fechar-gerenciar-barbeiros" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-gerenciar-barbeiros">Gerenciar Barbeiros</h2>
+            <p class="modal-descricao">Ative ou inative os profissionais cadastrados.</p>
+
+            <div id="lista-gerenciar-barbeiros" class="lista-gerenciamento">
+                <p class="lista-vazia">Nenhum barbeiro cadastrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-gerenciar-servicos" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento" role="dialog" aria-modal="true" aria-labelledby="titulo-gerenciar-servicos">
+            <button type="button" id="fechar-gerenciar-servicos" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-gerenciar-servicos">Gerenciar Serviços</h2>
+            <p class="modal-descricao">Consulte os valores e ative ou inative os serviços.</p>
+
+            <div id="lista-gerenciar-servicos" class="lista-gerenciamento">
+                <p class="lista-vazia">Nenhum serviço cadastrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-gerenciar-clientes" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento" role="dialog" aria-modal="true" aria-labelledby="titulo-gerenciar-clientes">
+            <button type="button" id="fechar-gerenciar-clientes" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-gerenciar-clientes">Gerenciar Clientes</h2>
+            <p class="modal-descricao">Consulte os contatos e ative ou inative os clientes.</p>
+
+            <div id="lista-gerenciar-clientes" class="lista-gerenciamento">
+                <p class="lista-vazia">Nenhum cliente cadastrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-horarios" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento" role="dialog" aria-modal="true" aria-labelledby="titulo-horarios">
+            <button type="button" id="fechar-horarios" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-horarios">Horários de Funcionamento</h2>
+            <p class="modal-descricao">Defina quando a barbearia recebe agendamentos.</p>
+
+            <form id="form-horarios" class="form-modal">
+                <fieldset class="dias-funcionamento">
+                    <legend>Dias de atendimento</legend>
+                    <label><input type="checkbox" name="dias" value="1"> Segunda</label>
+                    <label><input type="checkbox" name="dias" value="2"> Terça</label>
+                    <label><input type="checkbox" name="dias" value="3"> Quarta</label>
+                    <label><input type="checkbox" name="dias" value="4"> Quinta</label>
+                    <label><input type="checkbox" name="dias" value="5"> Sexta</label>
+                    <label><input type="checkbox" name="dias" value="6"> Sábado</label>
+                    <label><input type="checkbox" name="dias" value="0"> Domingo</label>
+                </fieldset>
+
+                <label>Abertura<input type="time" name="abertura" required></label>
+                <label>Fechamento<input type="time" name="fechamento" required></label>
+
+                <label>
+                    Intervalo da agenda
+                    <select name="intervalo" required>
+                        <option value="15">15 minutos</option>
+                        <option value="30">30 minutos</option>
+                        <option value="45">45 minutos</option>
+                        <option value="60">60 minutos</option>
+                    </select>
+                </label>
+
+                <p class="mensagem-form" id="mensagem-horarios" role="status"></p>
+                <button type="submit">Salvar horários</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-gerenciar-agendamentos" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento modal-agendamentos" role="dialog" aria-modal="true" aria-labelledby="titulo-gerenciar-agendamentos">
+            <button type="button" id="fechar-gerenciar-agendamentos" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-gerenciar-agendamentos">Gerenciar Agendamentos</h2>
+            <p class="modal-descricao">Filtre a agenda e atualize o status dos atendimentos.</p>
+
+            <div class="filtros-agendamentos">
+                <label>Data<input type="date" id="filtro-agendamento-data"></label>
+                <label>
+                    Barbeiro
+                    <select id="filtro-agendamento-barbeiro">
+                        <option value="">Todos</option>
+                    </select>
+                </label>
+                <label>
+                    Status
+                    <select id="filtro-agendamento-status">
+                        <option value="">Todos</option>
+                        <option value="scheduled">Agendado</option>
+                        <option value="confirmed">Confirmado</option>
+                        <option value="in-service">Em atendimento</option>
+                        <option value="cancelled">Cancelado</option>
+                    </select>
+                </label>
+                <button type="button" id="limpar-filtros-agendamentos">Limpar filtros</button>
+            </div>
+
+            <div id="lista-gerenciar-agendamentos" class="lista-gerenciamento">
+                <p class="lista-vazia">Nenhum agendamento encontrado.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-relatorios" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento modal-relatorios" role="dialog" aria-modal="true" aria-labelledby="titulo-relatorios">
+            <button type="button" id="fechar-relatorios" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-relatorios">Relatórios</h2>
+            <p class="modal-descricao">Acompanhe os resultados com base nos agendamentos cadastrados.</p>
+
+            <div class="filtros-relatorios">
+                <label>Data inicial<input type="date" id="relatorio-data-inicial"></label>
+                <label>Data final<input type="date" id="relatorio-data-final"></label>
+                <button type="button" id="aplicar-relatorio">Aplicar período</button>
+            </div>
+
+            <div class="resumo-relatorios">
+                <article><span>Total</span><strong id="relatorio-total">0</strong></article>
+                <article><span>Confirmados</span><strong id="relatorio-confirmados">0</strong></article>
+                <article><span>Cancelados</span><strong id="relatorio-cancelados">0</strong></article>
+                <article><span>Receita prevista</span><strong id="relatorio-receita">R$ 0,00</strong></article>
+            </div>
+
+            <section class="servicos-relatorio">
+                <h3>Serviços mais procurados</h3>
+                <div id="relatorio-servicos">
+                    <p class="lista-vazia">Nenhum dado no período.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="modal-configuracoes" class="modal-overlay" hidden>
+        <div class="modal-conteudo modal-gerenciamento" role="dialog" aria-modal="true" aria-labelledby="titulo-configuracoes">
+            <button type="button" id="fechar-configuracoes" class="fechar-modal" aria-label="Fechar">×</button>
+
+            <h2 id="titulo-configuracoes">Configurações da Barbearia</h2>
+            <p class="modal-descricao">Dados que serão utilizados pelo painel e, futuramente, pelo bot.</p>
+
+            <form id="form-configuracoes" class="form-modal">
+                <label>Nome comercial<input type="text" name="nome" maxlength="100" required></label>
+                <label>WhatsApp da barbearia<input type="tel" name="telefone" maxlength="20" placeholder="(00) 00000-0000" required></label>
+                <label>Endereço<input type="text" name="endereco" maxlength="160" required></label>
+                <label>Cidade<input type="text" name="cidade" maxlength="100" required></label>
+
+                <label>
+                    Antecedência mínima para agendar
+                    <select name="antecedencia" required>
+                        <option value="0">Sem antecedência mínima</option>
+                        <option value="1">1 hora</option>
+                        <option value="2">2 horas</option>
+                        <option value="4">4 horas</option>
+                        <option value="12">12 horas</option>
+                        <option value="24">24 horas</option>
+                    </select>
+                </label>
+
+                <label>
+                    Mensagem de boas-vindas do futuro bot
+                    <textarea name="mensagem" maxlength="500" rows="4" placeholder="Olá! Bem-vindo à Barbearia Fio de Ouro."></textarea>
+                </label>
+
+                <p class="mensagem-form" id="mensagem-configuracoes" role="status"></p>
+                <button type="submit">Salvar configurações</button>
+                <a class="abrir-simulador" href="simulador.html">Abrir simulador do BarberBot</a>
             </form>
         </div>
     </div>
