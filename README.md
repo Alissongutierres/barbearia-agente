@@ -4,6 +4,8 @@ Painel administrativo e assistente de agendamentos desenvolvido para demonstrar 
 
 O projeto combina um dashboard web conectado ao Firebase, um simulador de conversa e uma integração experimental com o WhatsApp por meio da Evolution API. O objetivo é servir como projeto de demonstração, portfólio e base reutilizável para futuras soluções comerciais.
 
+Para compreender a construção completa, a hierarquia e a ordem manual de implementação, consulte o [Raio X do projeto](RAIO-X-DO-PROJETO.md).
+
 > **Estado do projeto:** demonstração funcional em desenvolvimento. O painel e o simulador utilizam dados reais do Firestore. A conversa pelo WhatsApp já funciona localmente, mas a gravação final dos agendamentos recebidos pelo WhatsApp no Firestore ainda é uma etapa pendente.
 
 ---
